@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useData } from '../context/DataContext';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -795,6 +796,29 @@ const MonthlyEditableBlock = ({ group, results, formatCurrency, employeeId, form
   );
 };
 
+MonthlyEditableBlock.propTypes = {
+  group: PropTypes.string.isRequired,
+  results: PropTypes.arrayOf(PropTypes.shape({
+    type: PropTypes.string,
+    tjm: PropTypes.number,
+    days: PropTypes.number,
+    salaire_brut: PropTypes.number,
+    net_paye: PropTypes.number,
+    net_avant_impot: PropTypes.number,
+    repas_restaurant: PropTypes.number,
+    total_charges_patronales: PropTypes.number,
+    total_cotisations_salariales: PropTypes.number,
+    total: PropTypes.number,
+    date_group: PropTypes.string,
+    filename: PropTypes.string,
+    details: PropTypes.string,
+  })).isRequired,
+  formatCurrency: PropTypes.func.isRequired,
+  employeeId: PropTypes.string,
+  formatGroupTitle: PropTypes.func.isRequired,
+  getTypeLabel: PropTypes.func.isRequired,
+};
+
 const UploadCard = ({ title, description, file, onFileSelect, id, icon }) => (
   <div className={`relative bg-white p-6 rounded-2xl border-2 border-dashed transition-all duration-300 group
     ${file ? 'border-[#7ED957] bg-green-50/30' : 'border-gray-200 hover:border-[#7ED957]'}`}>
@@ -834,5 +858,15 @@ const UploadCard = ({ title, description, file, onFileSelect, id, icon }) => (
     </div>
   </div>
 );
+
+UploadCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  file: PropTypes.object,
+  onFileSelect: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
+  icon: PropTypes.node,
+};
+
 
 export default SaisieSalarieUnique;

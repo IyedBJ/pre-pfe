@@ -1,4 +1,6 @@
 import { X, Mail, Phone, Globe, MapPin, Briefcase, TrendingUp, CreditCard, Calendar } from "lucide-react";
+import PropTypes from 'prop-types';
+
 
 export default function ClientDetailsModal({ isOpen, onClose, client }) {
   if (!isOpen || !client) return null;
@@ -157,3 +159,28 @@ export default function ClientDetailsModal({ isOpen, onClose, client }) {
     </div>
   );
 }
+
+ClientDetailsModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  client: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    avatar: PropTypes.string,
+    code_client: PropTypes.string,
+    status: PropTypes.string,
+    email: PropTypes.string,
+    phone: PropTypes.string,
+    url: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    address: PropTypes.string,
+    zip: PropTypes.string,
+    town: PropTypes.string,
+    siren: PropTypes.string,
+    siret: PropTypes.string,
+    ape: PropTypes.string,
+    tva_intra: PropTypes.string,
+    invoice_count: PropTypes.number,
+    total_ca_ht: PropTypes.number,
+    outstanding_amount: PropTypes.number,
+    note_public: PropTypes.string,
+  }),
+};

@@ -1,5 +1,11 @@
-const { spawn } = require("child_process");        //permet à Node.js de lancer un programme externe
-const path = require("path");
+const { spawn } = require("node:child_process");
+const path = require("node:path");
+
+const sanitizeInput = (input) => {
+    if (typeof input !== 'string') return '';
+    // Remove control characters and potential command injection sequences
+    return input.replace(/[^\w\s\-\.\/]/gi, '');
+};
 
 exports.extractFinancialData = (req, res) => {
     if (!req.file) return res.status(400).send({ error: "Fichier manquant" });
@@ -8,7 +14,7 @@ exports.extractFinancialData = (req, res) => {
     const fileExt = path.extname(req.file.originalname).toLowerCase();
     
     const scriptPath = path.join(__dirname, "../../microservice-python/ai_extractor.py");
-    const pythonPath = "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python311\\python.exe";
+    const pythonPath = String.raw`C:\Users\user\AppData\Local\Programs\Python\Python311\python.exe`;
     console.log(`[Backend] Launching Python extraction: script=${scriptPath}, file=${filePath}`);
 
     const pythonProcess = spawn(pythonPath, [scriptPath, filePath, fileExt]);
@@ -49,11 +55,14 @@ exports.extractZipData = (req, res) => {
 
     const filePath = path.resolve(req.file.path);
     const scriptPath = path.join(__dirname, "../../microservice-python/zip_processor.py");
-    const pythonPath = "C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python311\\python.exe";
+    const pythonPath = String.raw`C:\Users\user\AppData\Local\Programs\Python\Python311\python.exe`;
     
-    console.log(`[Backend] Launching ZIP extraction: script=${scriptPath}, file=${filePath}, employee=${employeeName}`);
+    const sanitizedEmployee = sanitizeInput(employeeName);
+    const sanitizedFileType = sanitizeInput(fileType || "unknown");
 
-    const pythonProcess = spawn(pythonPath, [scriptPath, filePath, employeeName, fileType || "unknown"]);
+    console.log(`[Backend] Launching ZIP extraction: script=${scriptPath}, file=${filePath}`);
+ 
+    const pythonProcess = spawn(pythonPath, [scriptPath, filePath, sanitizedEmployee, sanitizedFileType]);
 
     let dataString = "";
     let errorString = "";
