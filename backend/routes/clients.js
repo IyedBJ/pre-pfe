@@ -12,6 +12,9 @@ const dolibarrRequest = async (endpoint, params = {}) => {
   });
 };
 
+const sanitizeForLog = (val) => String(val).replace(/[^\w\s\-\.]/g, '_');
+
+
 router.get('/', async (req, res) => {
   try {
     console.log("Fetching clients and invoices from Dolibarr...");
@@ -117,7 +120,7 @@ router.get('/logo/:id/:filename', async (req, res) => {
     
     const filePath = `${id}/logos/${filename}`;
 
-    console.log(`[LogoProxy] Fetching for Client ${id}: ${filePath}`);
+    console.log(`[LogoProxy] Fetching for Client ${sanitizeForLog(id)}: ${sanitizeForLog(filePath)}`);
 
     const response = await axios({
       method: 'get',
@@ -134,13 +137,13 @@ router.get('/logo/:id/:filename', async (req, res) => {
     });
 
     if (response.data && response.data.content) {
-      console.log(`[LogoProxy] Received base64 for ${filename}`);
+      console.log(`[LogoProxy] Received base64 for ${sanitizeForLog(filename)}`);
       const buffer = Buffer.from(response.data.content, 'base64');
       const contentType = response.data['content-type'] || 'image/png';
       res.set('Content-Type', contentType);
       res.send(buffer);
     } else {
-      console.log(`[LogoProxy] Pipe stream for ${filename}`);
+      console.log(`[LogoProxy] Pipe stream for ${sanitizeForLog(filename)}`);
       res.set('Content-Type', response.headers['content-type'] || 'image/png');
       if (typeof response.data.pipe === 'function') {
         response.data.pipe(res);
@@ -149,7 +152,7 @@ router.get('/logo/:id/:filename', async (req, res) => {
       }
     }
   } catch (err) {
-    console.error(`[LogoProxy] Error ${req.params.filename}:`, err.response?.data?.error?.message || err.message);
+    console.error(`[LogoProxy] Error ${sanitizeForLog(req.params.filename)}:`, err.response?.data?.error?.message || err.message);
     res.status(404).send('Logo not found');
   }
 });

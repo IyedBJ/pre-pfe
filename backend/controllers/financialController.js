@@ -3,8 +3,8 @@ const path = require("node:path");
 
 const sanitizeInput = (input) => {
     if (typeof input !== 'string') return '';
-    // Remove control characters and potential command injection sequences
-    return input.replace(/[^\w\s\-\.\/]/gi, '');
+    // Strict whitelist: only allow alphanumeric, spaces, dots, dashes, and slashes
+    return input.replaceAll(/[^\w\s\-\.\/]/gi, '');
 };
 
 exports.extractFinancialData = (req, res) => {

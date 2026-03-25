@@ -12,7 +12,7 @@ const SEARCH_BASE = process.env.LDAP_SEARCH_BASE || "DC=elzei,DC=local";
  * See RFC 4515 for details.
  */
 const escapeLDAPSearchFilter = (str) => {
-  return str.replace(/[\\*()\0]/g, (char) => {
+  return str.replaceAll(/[\\*()\0]/g, (char) => {
     switch (char) {
       case '\\': return '\\5c';
       case '*':  return '\\2a';
@@ -25,9 +25,9 @@ const escapeLDAPSearchFilter = (str) => {
 };
 
 const loginLocal = async (username, password, res) => {
-  console.log(`Bascule vers l'authentification locale pour: ${username}`);
+  console.log(`Bascule vers l'authentification locale pour: ${username.replaceAll(/[^\w\s\-\.@\\]/g, '_')}`);
   try {
-    const cleanUsername = username.includes("\\") ? username.split("\\").pop() : username;
+    const cleanUsername = username.includes("\\") ? username.split("\\").pop().replaceAll(/[^\w\s\-\.@]/g, '') : username.replaceAll(/[^\w\s\-\.@]/g, '');
     const user = await User.findOne({ username: cleanUsername });
 
     if (!user || !user.password) {

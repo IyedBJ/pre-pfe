@@ -12,6 +12,9 @@ const dolibarrRequest = async (endpoint, params = {}) => {
   });
 };
 
+const sanitizeForLog = (val) => String(val).replace(/[^\w\s\-\.]/g, '_');
+
+
 router.get('/', async (req, res) => {
   try {
     console.log("Fetching invoices and thirdparties from Dolibarr...");
@@ -93,7 +96,13 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(`[Dolibarr] Fetching invoice details for ID: ${id}`);
+    
+    // Strict validation: Invoice ID must be numeric
+    if (!/^\d+$/.test(id)) {
+      return res.status(400).json({ message: "ID de facture invalide" });
+    }
+
+    console.log(`[Dolibarr] Fetching invoice details for ID: ${sanitizeForLog(id)}`);
     
     const invRes = await dolibarrRequest(`/invoices/${id}`);
     const inv = invRes.data;
