@@ -5,7 +5,6 @@ import { X, Save, Info, Briefcase } from "lucide-react";
 export default function AddProjectModal({ isOpen, onClose, onSave, editingProject }) {
   const [employees, setEmployees] = useState([]);
   const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     title: "",
@@ -21,7 +20,7 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
 
   useEffect(() => {
     if (isOpen) {
-      fetchData();
+      fetchData().catch(console.error);
     }
   }, [isOpen]);
 
@@ -51,19 +50,19 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
 
   const fetchData = async () => {
     try {
-      setLoading(true);
       const [empRes, cliRes] = await Promise.all([
         fetch("http://localhost:7000/api/employees"),
         fetch("http://localhost:7000/api/clients"),
       ]);
+      if (!empRes.ok || !cliRes.ok) {
+        throw new Error("Erreur de requête HTTP");
+      }
       const [empData, cliData] = await Promise.all([empRes.json(), cliRes.json()]);
       setEmployees(empData);
       setClients(cliData);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Erreur lors de la récupération des salariés/clients");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -248,7 +247,7 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
             Annuler
           </button>
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="px-8 py-2.5 bg-[#7fd959] text-slate-900 font-bold rounded-lg hover:brightness-105 active:scale-95 transition-all text-sm flex items-center gap-2"
           >
             <Save className="w-4 h-4" />

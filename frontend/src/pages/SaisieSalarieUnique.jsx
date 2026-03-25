@@ -44,6 +44,7 @@ const SaisieSalarieUnique = () => {
     const fetchInvoices = async () => {
       try {
         const res = await fetch("http://localhost:7000/api/invoices");
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setInvoices(data);
@@ -137,9 +138,16 @@ const SaisieSalarieUnique = () => {
               allResults.push(...data.map(item => ({ ...item, type })));
             }
           } else {
-            const error = await res.json();
-            console.error(`Error ZIP ${type}:`, error);
-            toast.error(`Erreur lors du traitement du ZIP (${type}): ${error.error || "Erreur inconnue"}`);
+            const textError = await res.text();
+            let errorMessage = "Erreur inconnue";
+            try {
+              const parsedError = JSON.parse(textError);
+              errorMessage = parsedError.error || errorMessage;
+            } catch {
+              errorMessage = textError || errorMessage;
+            }
+            console.error(`Error ZIP ${type}:`, errorMessage);
+            toast.error(`Erreur lors du traitement du ZIP (${type}): ${errorMessage}`);
           }
         }
       }
@@ -263,18 +271,7 @@ const SaisieSalarieUnique = () => {
     return { label: type, color: 'bg-gray-100 text-gray-600' };
   };
 
-  // Compute totals for each month
-  const getMonthSummary = (items) => {
-    const totals = { invoice: 0, expenses: 0, mileage: 0, payslips: 0 };
-    items.forEach(item => {
-      const amount = item.total ?? item.net_paye ?? 0;
-      if (item.type === 'invoice') totals.invoice += amount;
-      else if (item.type === 'expenses') totals.expenses += amount;
-      else if (item.type === 'mileage') totals.mileage += amount;
-      else if (item.type === 'payslips') totals.payslips += amount;
-    });
-    return totals;
-  };
+  // Compute totals is no longer needed
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -436,7 +433,6 @@ const SaisieSalarieUnique = () => {
               results={results}
               formatCurrency={formatCurrency}
               employeeId={selectedEmployeeId}
-              monthNames={monthNames}
               formatGroupTitle={formatGroupTitle}
               getTypeLabel={getTypeLabel}
             />
@@ -447,7 +443,7 @@ const SaisieSalarieUnique = () => {
   );
 };
 
-const MonthlyEditableBlock = ({ group, results, formatCurrency, employeeId, monthNames, formatGroupTitle, getTypeLabel }) => {
+const MonthlyEditableBlock = ({ group, results, formatCurrency, employeeId, formatGroupTitle, getTypeLabel }) => {
   const { addMonthlyData } = useData();
 
   // Initial aggregate extraction logic based on the results array

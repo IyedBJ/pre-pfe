@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom'; 
+import { Link, useLocation } from 'react-router-dom'; 
 import SaisieEmployee from '../components/SaisieEmployee';
 import SaisieGroupe from './SaisieGroupe';
 import SaisieSalarieUnique from './SaisieSalarieUnique';
@@ -27,7 +27,6 @@ import {
 
 const Home = () => {
   const location = useLocation(); 
-  const navigate = useNavigate();
   const { logout, user } = useAuth();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 

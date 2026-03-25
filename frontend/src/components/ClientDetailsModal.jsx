@@ -67,7 +67,7 @@ export default function ClientDetailsModal({ isOpen, onClose, client }) {
                 {client.url && (
                   <div className="flex items-center gap-3 text-slate-600">
                     <div className="p-2 bg-slate-50 rounded-lg"><Globe className="w-4 h-4 text-[#7ED957]" /></div>
-                    <a href={client.url.startsWith('http') ? client.url : `https://${client.url}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-[#7ED957] transition-colors truncate">
+                    <a href={typeof client.url === "string" && client.url.startsWith('http') ? client.url : `https://${client.url}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:text-[#7ED957] transition-colors truncate">
                       {client.url}
                     </a>
                   </div>

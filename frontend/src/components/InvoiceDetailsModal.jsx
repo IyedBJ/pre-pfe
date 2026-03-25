@@ -1,4 +1,4 @@
-import { X, Receipt, TrendingUp, CreditCard, Calendar, User, FileText, CheckCircle2, AlertCircle, Info } from "lucide-react";
+import { X, Receipt, Calendar, CheckCircle2, AlertCircle, Info } from "lucide-react";
 
 export default function InvoiceDetailsModal({ isOpen, onClose, invoice }) {
   if (!isOpen || !invoice) return null;

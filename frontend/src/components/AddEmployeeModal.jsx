@@ -17,6 +17,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
 
   useEffect(() => {
     if (editingEmployee) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         nom: editingEmployee.name || "",
         email: editingEmployee.email || "",
@@ -71,7 +72,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
       setForm({ nom: "", email: "", role: "", client: "", tjm: "", dateEntree: null });
       setErrors({});
       onClose?.();
-    });
+    }).catch(console.error);
   };
 
   const handleCancel = () => {
@@ -268,8 +269,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
             Annuler
           </button>
           <button
-            type="button"
-            onClick={handleSubmit}
+            type="submit"
             className="px-8 py-2.5 bg-[#7fd959] text-slate-900 font-bold rounded-lg hover:brightness-105 hover:shadow-lg active:scale-95 transition-all text-sm flex items-center gap-2"
           >
             <Save className="w-4 h-4" />

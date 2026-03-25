@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { UserPlus, Trash2, Edit2 } from "lucide-react";
@@ -58,7 +59,6 @@ function ClientBadge({ client, color }) {
 
 export default function GestionSalarie() {
   const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState(null);
   const [search, setSearch] = useState("");
@@ -72,15 +72,12 @@ export default function GestionSalarie() {
 
   const fetchEmployees = async () => {
     try {
-      setLoading(true);
       const res = await fetch("http://localhost:7000/api/employees");
       const data = await res.json();
       setEmployees(data);
     } catch (error) {
       toast.error("Erreur lors du chargement des salariés");
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 

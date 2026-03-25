@@ -75,7 +75,7 @@ export default function GestionProjets() {
         const errorData = await res.json();
         toast.error(errorData.message || "Erreur lors de l'enregistrement");
       }
-    } catch (error) {
+    } catch {
       toast.error("Erreur de connexion");
     }
   };
@@ -99,7 +99,7 @@ export default function GestionProjets() {
             toast.success("Projet supprimé");
             fetchProjects();
           }
-        } catch (error) {
+        } catch {
           toast.error("Erreur de connexion");
         }
       }

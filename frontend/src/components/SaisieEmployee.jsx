@@ -57,24 +57,6 @@ export function SaisieEmployee() {
   const rentabilite = totalPercu - coutTotal;
   const pourcentageRentabilite = totalPercu > 0 ? (rentabilite / totalPercu) * 100 : 0;
 
-
-  const generateMonthOptions = () => {
-    const options = [];
-    const now = new Date();
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthStr = date.toISOString().slice(0, 7);
-      const label = date.toLocaleDateString('fr-FR', {
-        month: 'long',
-        year: 'numeric',
-      });
-      options.push({ value: monthStr, label });
-    }
-    return options;
-  };
-
-  const monthOptions = generateMonthOptions();
-
   // Fetch projects from backend
   useEffect(() => {
     const fetchProjects = async () => {
