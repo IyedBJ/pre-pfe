@@ -12,7 +12,7 @@ const dolibarrRequest = async (endpoint, params = {}) => {
   });
 };
 
-const sanitizeForLog = (val) => String(val).replace(/[^\w\s\-\.]/g, '_');
+const sanitizeForLog = (val) => String(val).replaceAll(/[^\w\s\-\.]/g, '_');
 
 
 router.get('/', async (req, res) => {
@@ -62,24 +62,35 @@ router.get('/', async (req, res) => {
       .filter(inv => inv.statut !== "0" && inv.statut !== "3"    ) 
       .map(inv => {
       const tp = thirdpartyMap[inv.socid] || {};
+      const remain = Number.parseFloat(inv.remaintopay !== undefined ? inv.remaintopay : (inv.resteapayer || 0));
+      const totalTTC = Number.parseFloat(inv.total_ttc || 0);
+      const totalHT = Number.parseFloat(inv.total_ht || 0);
+      
+      if (remain <= 0) stats.paidCount++;
+      else stats.unpaidCount++;
+
+      stats.totalHT += totalHT;
+      stats.totalTTC += totalTTC;
+      stats.totalRemain += remain;
+
       return {
         id: inv.id,
         ref: inv.ref,
         date: inv.date,
         date_lim_reglement: inv.date_lim_reglement,
-        total_ht: parseFloat(inv.total_ht || 0),
-        total_ttc: parseFloat(inv.total_ttc || 0),
-        total_tva: parseFloat(inv.total_tva || 0),
+        total_ht: totalHT,
+        total_ttc: totalTTC,
+        total_tva: Number.parseFloat(inv.total_tva || 0),
         status: inv.statut || inv.status,
         paye: inv.paye,
-        remaintopay: parseFloat(inv.remaintopay !== undefined ? inv.remaintopay : (inv.resteapayer || 0)),
+        remaintopay: remain,
         client_id: inv.socid,
         client_name: tp.name || "Client inconnu",
         client_code: tp.code_client || "N/A"
       };
     });
 
-    res.json(mappedInvoices);
+    res.json({ invoices: mappedInvoices, stats });
   } catch (err) {
     const status = err.response?.status || 500;
     const errorMessage = err.response?.data?.message || err.message;
@@ -107,14 +118,12 @@ router.get('/:id', async (req, res) => {
     const invRes = await dolibarrRequest(`/invoices/${id}`);
     const inv = invRes.data;
 
-
-    
     res.json({
       id: inv.id,
       ref: inv.ref,
       date: inv.date,
-      total_ht: parseFloat(inv.total_ht || 0),
-      total_ttc: parseFloat(inv.total_ttc || 0),
+      total_ht: Number.parseFloat(inv.total_ht || 0),
+      total_ttc: Number.parseFloat(inv.total_ttc || 0),
       status: inv.statut || inv.status,
       paye: inv.paye,
       lines: inv.lines || []

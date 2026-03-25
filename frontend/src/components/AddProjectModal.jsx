@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
 import { X, Save, Info, Briefcase } from "lucide-react";
+import PropTypes from "prop-types";
+
 
 export default function AddProjectModal({ isOpen, onClose, onSave, editingProject }) {
   const [employees, setEmployees] = useState([]);
@@ -85,8 +85,9 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
     if (!form.title.trim()) newErrors.title = "Le titre est requis";
     if (!form.employeeId) newErrors.employeeId = "Le salarié est requis";
     if (!form.clientDolibarrId) newErrors.clientDolibarrId = "Le client est requis";
-    if (!form.tjm || isNaN(Number(form.tjm)) || Number(form.tjm) < 0)
+    if (!form.tjm || Number.isNaN(Number(form.tjm)) || Number(form.tjm) < 0)
       newErrors.tjm = "TJM invalide";
+
     return newErrors;
   };
 
@@ -106,8 +107,12 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white w-full max-w-[640px] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn">
+      <div className="bg-white w-full max-w-[640px] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn" onClick={(e) => e.stopPropagation()}>
+
         {/* Header */}
         <div className="px-8 pt-8 pb-4 flex justify-between items-start">
           <div className="flex flex-col gap-1">
@@ -132,9 +137,11 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-8 py-6 flex flex-col gap-5">
           <div className="flex flex-col gap-1.5">
-            <label className="text-slate-700 text-sm font-semibold">Titre du Projet</label>
+            <label htmlFor="project-title" className="text-slate-700 text-sm font-semibold">Titre du Projet</label>
             <input
+              id="project-title"
               type="text"
+
               value={form.title}
               onChange={(e) => handleChange("title", e.target.value)}
               placeholder="Ex: Refonte Frontend, Audit Cloud..."
@@ -147,9 +154,11 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">Salarié Assigné</label>
+              <label htmlFor="project-employee" className="text-slate-700 text-sm font-semibold">Salarié Assigné</label>
               <select
+                id="project-employee"
                 value={form.employeeId}
+
                 onChange={(e) => handleChange("employeeId", e.target.value)}
                 className={`w-full h-12 rounded-lg border px-4 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#7fd959] transition-all appearance-none cursor-pointer ${
                   errors.employeeId ? "border-red-400" : "border-slate-200"
@@ -166,9 +175,11 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">Client (Dolibarr)</label>
+              <label htmlFor="project-client" className="text-slate-700 text-sm font-semibold">Client (Dolibarr)</label>
               <select
+                id="project-client"
                 value={form.clientDolibarrId}
+
                 onChange={(e) => handleChange("clientDolibarrId", e.target.value)}
                 className={`w-full h-12 rounded-lg border px-4 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#7fd959] transition-all appearance-none cursor-pointer ${
                   errors.clientDolibarrId ? "border-red-400" : "border-slate-200"
@@ -187,10 +198,12 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">TJM appliqué</label>
+              <label htmlFor="project-tjm" className="text-slate-700 text-sm font-semibold">TJM appliqué</label>
               <div className="relative">
                 <input
+                  id="project-tjm"
                   type="number"
+
                   value={form.tjm}
                   onChange={(e) => handleChange("tjm", e.target.value)}
                   placeholder="850"
@@ -204,9 +217,11 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">État du Projet</label>
+              <label htmlFor="project-status" className="text-slate-700 text-sm font-semibold">État du Projet</label>
               <select
+                id="project-status"
                 value={form.status}
+
                 onChange={(e) => handleChange("status", e.target.value)}
                 className="w-full h-12 rounded-lg border border-slate-200 px-4 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#7fd959] transition-all appearance-none cursor-pointer"
               >
@@ -219,9 +234,11 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-slate-700 text-sm font-semibold">Marge cible (%)</label>
+            <label htmlFor="project-marge" className="text-slate-700 text-sm font-semibold">Marge cible (%)</label>
             <input
+              id="project-marge"
               type="range"
+
               min="0"
               max="100"
               value={form.marge}
@@ -258,3 +275,21 @@ export default function AddProjectModal({ isOpen, onClose, onSave, editingProjec
     </div>
   );
 }
+
+AddProjectModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  editingProject: PropTypes.shape({
+    title: PropTypes.string,
+    employeeId: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.shape({ _id: PropTypes.string })
+    ]),
+    clientDolibarrId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    clientName: PropTypes.string,
+    tjm: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.string,
+    marge: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+};

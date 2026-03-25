@@ -141,8 +141,8 @@ export function SaisieEmployee() {
       
       if (invoiceData.lines && invoiceData.lines.length > 0) {
         const primaryLine = invoiceData.lines[0];
-        setTjm(parseFloat(primaryLine.subprice || primaryLine.price || 0));
-        setDaysWorked(parseFloat(primaryLine.qty || 0));
+        setTjm(Number.parseFloat(primaryLine.subprice || primaryLine.price || 0));
+        setDaysWorked(Number.parseFloat(primaryLine.qty || 0));
       }
 
       setInvoicePaid(invoiceData.paye === "1" || invoiceData.paye === 1 || invoiceData.status === "2");
@@ -403,10 +403,11 @@ export function SaisieEmployee() {
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="project-select" className="block text-sm font-medium text-gray-700 mb-2">
                 Projet *
               </label>
               <select
+                id="project-select"
                 value={selectedProjectId}
                 onChange={(e) => {
                   const pId = e.target.value;
@@ -452,11 +453,12 @@ export function SaisieEmployee() {
             }, [])}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="date-select" className="block text-sm font-medium text-gray-700 mb-2">
                 Date *
               </label>
 
               <DatePicker
+                id="date-select"
                 selected={selectedDate}
                 onChange={(date) => {
                   setSelectedDate(date);
@@ -472,10 +474,11 @@ export function SaisieEmployee() {
 
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="invoice-select" className="block text-sm font-medium text-gray-700 mb-2">
                 Facture Dolibarr *
               </label>
               <select
+                id="invoice-select"
                 value={selectedInvoiceId}
                 onChange={(e) => setSelectedInvoiceId(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#7ED957] focus:border-transparent"

@@ -1,4 +1,5 @@
 import { X, Receipt, Calendar, CheckCircle2, AlertCircle, Info } from "lucide-react";
+import PropTypes from "prop-types";
 
 export default function InvoiceDetailsModal({ isOpen, onClose, invoice }) {
   if (!isOpen || !invoice) return null;
@@ -24,8 +25,11 @@ export default function InvoiceDetailsModal({ isOpen, onClose, invoice }) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn border border-slate-200">
+      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn border border-slate-200" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className="relative h-24 bg-slate-50 border-b border-slate-100 flex items-center px-8">
           <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm mr-4">
@@ -166,3 +170,21 @@ export default function InvoiceDetailsModal({ isOpen, onClose, invoice }) {
     </div>
   );
 }
+
+InvoiceDetailsModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  invoice: PropTypes.shape({
+    ref: PropTypes.string,
+    remaintopay: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    date: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    date_lim_reglement: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    client_name: PropTypes.string,
+    client_code: PropTypes.string,
+    total_ht: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    total_ttc: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    total_tva: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    status: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    paye: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  }),
+};

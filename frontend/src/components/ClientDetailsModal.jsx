@@ -11,14 +11,15 @@ export default function ClientDetailsModal({ isOpen, onClose, client }) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && onClose()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn border border-slate-200">
+      <div className="bg-white w-full max-w-[700px] rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn border border-slate-200" onClick={(e) => e.stopPropagation()}>
         {/* Header with Logo Backdrop */}
         <div className="relative h-32 bg-slate-50 border-b border-slate-100">
           <div className="absolute -bottom-8 left-8 p-1 bg-white rounded-xl border border-slate-200 shadow-sm">
             <div className="h-20 w-20 rounded-lg overflow-hidden flex items-center justify-center bg-slate-50">
-              <img 
-                src={client.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(client.name)}&background=random&size=128`} 
                 alt={client.name} 
                 className="w-full h-full object-contain p-2"
                 onError={(e) => {

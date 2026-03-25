@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { fr } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { X, Save, Info, UserPlus } from "lucide-react";
+import PropTypes from "prop-types";
 
 export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmployee }) {
   const [form, setForm] = useState({
@@ -45,7 +46,7 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       newErrors.email = "Email invalide";
     if (!form.role) newErrors.role = "Le rôle est requis";
-    if (!form.tjm || isNaN(Number(form.tjm)) || Number(form.tjm) <= 0) 
+    if (!form.tjm || Number.isNaN(Number(form.tjm)) || Number(form.tjm) <= 0) 
       newErrors.tjm = "TJM invalide (nombre positif requis)";
     if (!form.dateEntree) newErrors.dateEntree = "La date est requise";
     return newErrors;
@@ -87,8 +88,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/45 backdrop-blur-sm"
       onClick={(e) => e.target === e.currentTarget && handleCancel()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && e.target === e.currentTarget && handleCancel()}
     >
-      <div className="bg-white w-full max-w-[640px] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn">
+      <div className="bg-white w-full max-w-[640px] rounded-xl shadow-2xl overflow-hidden flex flex-col animate-fadeIn" onClick={(e) => e.stopPropagation()}>
         
         {/* ── Header ── */}
         <div className="px-8 pt-8 pb-4 flex justify-between items-start">
@@ -118,10 +122,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
           {/* Row 1 : Nom + Email */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-name" className="text-slate-700 text-sm font-semibold">
                 Nom complet <span className="text-red-400">*</span>
               </label>
               <input
+                id="employee-name"
                 type="text"
                 value={form.nom}
                 onChange={(e) => handleChange("nom", e.target.value)}
@@ -136,10 +141,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-email" className="text-slate-700 text-sm font-semibold">
                 Email professionnel <span className="text-red-400">*</span>
               </label>
               <input
+                id="employee-email"
                 type="email"
                 value={form.email}
                 onChange={(e) => handleChange("email", e.target.value)}
@@ -157,10 +163,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
           {/* Row 2 : Rôle + Client */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-role" className="text-slate-700 text-sm font-semibold">
                 Rôle <span className="text-red-400">*</span>
               </label>
               <select
+                id="employee-role"
                 value={form.role}
                 onChange={(e) => handleChange("role", e.target.value)}
                 className={`w-full h-12 rounded-lg border px-4 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#7fd959] transition-all appearance-none cursor-pointer ${
@@ -187,10 +194,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-client" className="text-slate-700 text-sm font-semibold">
                 Client assigné
               </label>
               <input
+                id="employee-client"
                 type="text"
                 value={form.client}
                 onChange={(e) => handleChange("client", e.target.value)}
@@ -203,11 +211,12 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
           {/* Row 3 : TJM + Date d'entrée */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-tjm" className="text-slate-700 text-sm font-semibold">
                 TJM <span className="text-red-400">*</span>
               </label>
               <div className="relative">
                 <input
+                  id="employee-tjm"
                   type="number"
                   value={form.tjm}
                   onChange={(e) => handleChange("tjm", e.target.value)}
@@ -227,10 +236,11 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-slate-700 text-sm font-semibold">
+              <label htmlFor="employee-date" className="text-slate-700 text-sm font-semibold">
                 Date d'entrée <span className="text-red-400">*</span>
               </label>
               <DatePicker
+                id="employee-date"
                 selected={form.dateEntree}
                 onChange={(date) => handleChange("dateEntree", date)}
                 locale={fr}
@@ -290,3 +300,17 @@ export default function AddEmployeeModal({ isOpen, onClose, onSave, editingEmplo
     </div>
   );
 }
+
+AddEmployeeModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onSave: PropTypes.func.isRequired,
+  editingEmployee: PropTypes.shape({
+    name: PropTypes.string,
+    email: PropTypes.string,
+    role: PropTypes.string,
+    client: PropTypes.string,
+    tjm: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    dateEntree: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+  }),
+};

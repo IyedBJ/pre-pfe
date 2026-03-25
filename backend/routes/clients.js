@@ -12,7 +12,7 @@ const dolibarrRequest = async (endpoint, params = {}) => {
   });
 };
 
-const sanitizeForLog = (val) => String(val).replace(/[^\w\s\-\.]/g, '_');
+const sanitizeForLog = (val) => String(val).replaceAll(/[^\w\s\-\.]/g, '_');
 
 
 router.get('/', async (req, res) => {
@@ -50,10 +50,10 @@ router.get('/', async (req, res) => {
             last_invoice_date: inv.date
           };
         }
-        invoiceStats[sid].total_ht += parseFloat(inv.total_ht || 0);
-        invoiceStats[sid].total_ttc += parseFloat(inv.total_ttc || 0);
+        invoiceStats[sid].total_ht += Number.parseFloat(inv.total_ht || 0);
+        invoiceStats[sid].total_ttc += Number.parseFloat(inv.total_ttc || 0);
         const outstanding = inv.remaintopay !== undefined ? inv.remaintopay : (inv.resteapayer || 0);
-        invoiceStats[sid].resteapayer += parseFloat(outstanding || 0);
+        invoiceStats[sid].resteapayer += Number.parseFloat(outstanding || 0);
         invoiceStats[sid].count += 1;
       });
     }

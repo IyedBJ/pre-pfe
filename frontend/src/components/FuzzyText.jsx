@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 const FuzzyText = ({
   children,
@@ -57,7 +58,7 @@ const FuzzyText = ({
         temp.style.fontSize = fontSize;
         document.body.appendChild(temp);
         const computedSize = window.getComputedStyle(temp).fontSize;
-        numericFontSize = parseFloat(computedSize);
+        numericFontSize = Number.parseFloat(computedSize);
         document.body.removeChild(temp);
       }
 
@@ -306,6 +307,28 @@ const FuzzyText = ({
   ]);
 
   return <canvas ref={canvasRef} className={className} />;
+};
+
+FuzzyText.propTypes = {
+  children: PropTypes.node.isRequired,
+  fontSize: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  fontWeight: PropTypes.number,
+  fontFamily: PropTypes.string,
+  color: PropTypes.string,
+  enableHover: PropTypes.bool,
+  baseIntensity: PropTypes.number,
+  hoverIntensity: PropTypes.number,
+  fuzzRange: PropTypes.number,
+  fps: PropTypes.number,
+  direction: PropTypes.string,
+  transitionDuration: PropTypes.number,
+  clickEffect: PropTypes.bool,
+  glitchMode: PropTypes.bool,
+  glitchInterval: PropTypes.number,
+  glitchDuration: PropTypes.number,
+  gradient: PropTypes.arrayOf(PropTypes.string),
+  letterSpacing: PropTypes.number,
+  className: PropTypes.string,
 };
 
 export default FuzzyText;
